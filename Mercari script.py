@@ -1,3 +1,13 @@
+import numpy as np
+import pandas as pd
+import os
+import statistics
+import heapq
+import re, string
+import time
+from collections import Counter
+from sklearn.decomposition import PCA
+from nltk.stem import WordNetLemmatizer
 from mercarifunc import *
 
 path = "C:\\Users\pault\OneDrive\Documenten\GitHub\input" # pauls path
@@ -17,7 +27,11 @@ print("test size:", test.shape)
 # matrix = instances_into_vectors(sample)
 # print(matrix)
 
-data = train.loc[0:1000]
-
+data = train.loc[0:10000]
+edit_data(data)
 item_des, categories, brand_names = lists_for_vector(data)
 item_dict, cat_dict, brand_dict = list_to_dict(item_des), list_to_dict(categories), list_to_dict(brand_names)
+
+matrix = instances_into_vectors(data, item_dict, cat_dict, brand_dict)
+
+print(matrix.shape)

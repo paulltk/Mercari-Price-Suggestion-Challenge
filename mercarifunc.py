@@ -26,6 +26,7 @@ def split_categories(data):
     return data
 
 def edit_data(data):
+    split_categories(data)
     fill_missing_items(data)
     change_item_description(data)
 
