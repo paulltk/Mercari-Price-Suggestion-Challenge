@@ -7,89 +7,10 @@ import re, string
 import time
 from nltk.stem import WordNetLemmatizer
 
-# Counts uniques in column
-def count_uniques(data, column):
-    total = set()
-    nameless = []
-    for val in data[column]:
-        if val != None:
-            total.update(val.split())
-            nameless += val.split()
-    return len(total), len(nameless)
-
-
-# sorts a column and returns a dictionary with a list of indexes that have the same text/number in that column.
-def sort_index_by_column(data, column):
-    dct = {'nan': []}
-    for index, row in data.iterrows():
-        if row[column] == row[column]:
-            if row[column] in dct:
-                dct[row[column]].append(index)
-            else:
-                dct[row[column]] = [index]
-        else:
-            dct["nan"].append(index)
-    return dct
-
-
-# deletes all the keys that have a list with only one value
-def delete_einzelgangers(dictionary):
-    new_dict = {}
-    for key in dictionary:
-        if len(dictionary[key]) != 1:
-            new_dict[key] = dictionary[key]
-    return new_dict
-
-
-# for every list, replace all the indexes with prices
-def replace_index_with_price(dicti, data):
-    new_dict = {}
-    for key in dicti:
-        lst = []
-        for ind in dicti[key]:
-            lst.append(data.get_value(ind, "price"))
-        new_dict[key] = lst
-    return new_dict
-
-
-# calculates various things for every key
-def mean_var_amount_per_dict_key(dicti):
-    mean_dict = {}
-    for key in dicti:
-        mean = statistics.mean(dicti[key])
-        variance = statistics.variance(dicti[key])
-        amount = len(dicti[key])
-        mean_dict[key] = [mean, variance, int(amount)]
-    return mean_dict
-
-
-# gets the amount of times a word is being used in the item description
-def get_common_words(data):
-    dct = {}
-    for index, row in data.iterrows():
-        for word in row["item_description"].split(" "):
-            if word in dct:
-                dct[word] += 1
-            else:
-                dct[word] = 1
-    highest_keys = sorted(dct, key=dct.get, reverse=True)
-    new_dct = {}
-    for key in highest_keys:
-        new_dct[key] = dct[key]
-    return new_dct
-
-
-# Replace NaN in brand_name column
-def replace_nan_brand(data):
-    data['brand_name'] = data['brand_name'].fillna('missing')
-    return data
-
-
 def hasNumbers(inputString):
     return any(char.isdigit() for char in inputString)
 
-
-# every item (except a few NaN's) have three categories. Here we split those in three different columns.
+# every item (except a few NaN's) have three categories. Here we make a list with those three categories.
 def split_categories(data):
     data["cat_list"] = ""
     for index, row in data.iterrows():
@@ -125,9 +46,6 @@ def change_item_description(data):
         words = [wnlm.lemmatize(w) for w in txt.split(" ") if w not in stopwords]
         data.set_value(index, "item_description", words)
 
-def fill_missing_brand_names(data):
-    data["brand_name"].fillna("missing", inplace=True)
-
 def fill_missing_items(data):
     data["brand_name"].fillna("missing", inplace=True)
     data["item_description"].fillna("missing", inplace=True)
@@ -136,37 +54,25 @@ def lists_for_vector(data):
     categories = []
     item_des = []
     brand_names = []
-    start = time.time()
-    print(time.time() - start)
+    s = time.time()
     for index, row in data.iterrows():
-        #print(row["first_cat"])
         categories += row["cat_list"]
-        if isinstance(row["item_description"], str):
-            print(index)
         item_des += row["item_description"]
         brand_names.append(row["brand_name"])
-    print(time.time() - start)
+    print("lists for vector time:", time.time() - s)
     return list(set(item_des)), list(set(categories)), list(set(brand_names))
 
 def list_to_dict(lst):
     return {k: v for v, k in enumerate(lst)}
 
-def instances_into_vectors(data):
+def instances_into_vectors(data, item_dict, cat_dict, brand_dict):
     """The vector is build out of the following elements: categories, brand name, item description,
     item condition and shipping. We have a list with all categories, a list with all brand names,
     same for item description. If categories is 1000 long, and brand name 2000, and the brand of an instance
     is on index 500, the boolean on the index 100+500 of the vector will be set to 1"""
-    print(time.time())
-    item_des, categories, brand_names = lists_for_vector(data)
-    item_dict, cat_dict, brand_dict = list_to_dict(item_des), list_to_dict(categories), list_to_dict(brand_names)
-    print(time.time())
     nodes = len(item_des) + len(categories) + len(brand_names) + 6
-    #print(nodes)
-    #print(data.shape[0])
     matrix = np.empty((data.shape[0], nodes))
-    #print(matrix.shape)
-    #print(item_des)
-    #print(categories)
+    s = time.time()
     for index, row in data.iterrows():
         cat_v = [0] * len(categories)
         for cat in row["cat_list"]:
@@ -179,20 +85,17 @@ def instances_into_vectors(data):
         for word in row["item_description"]:
             try: item_v[item_dict[word]] = 1
             except KeyError: pass
-        #cat_v = [1 if cat in row["cat_list"] else 0 for cat in categories]
-        #brand_v = [1 if brand in row["brand_name"] else 0 for brand in brand_names]
-        #item_v = [1 if word in row["item_description"] else 0 for word in item_des]
         cond_v = [0, 0, 0, 0, 0]
         cond_v[row["item_condition_id"]-1] = 1
         vector = cat_v + brand_v + item_v + cond_v + [row["shipping"]]
         matrix[index] = vector
-    print(time.time())
+    print("instances to vector time:", time.time() -s)
     return matrix
 
 def vector_to_csv(data, path):
     change_item_description(data)
     split_categories(data)
-    fill_missing_brand_names(data)
+    fill_missing_items(data)
     item_des, categories, brand_names = lists_for_vector(data)
     with open(path, 'w') as vec_file:
         for i, cat in enumerate(categories):
