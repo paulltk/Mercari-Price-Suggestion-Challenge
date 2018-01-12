@@ -56,7 +56,7 @@ def fill_missing_items(data):
     data["brand_name"].fillna("missing", inplace=True)
     data["item_description"].fillna("missing", inplace=True)
 
-def lists_for_vector(data, thres=3):
+def lists_for_vector(data, thres=25):
     categories = []
     item_des = []
     brand_names = []
@@ -79,18 +79,18 @@ def instances_into_vectors(data, item_dict, cat_dict, brand_dict):
     item condition and shipping. We have a list with all categories, a list with all brand names,
     same for item description. If categories is 1000 long, and brand name 2000, and the brand of an instance
     is on index 500, the boolean on the index 100+500 of the vector will be set to 1"""
-    nodes = len(item_des) + len(categories) + len(brand_names) + 6
+    nodes = len(item_dict) + len(cat_dict) + len(brand_dict) + 6
     matrix = np.empty((data.shape[0], nodes))
     s = time.time()
     for index, row in data.iterrows():
-        cat_v = [0] * len(categories)
+        cat_v = [0] * len(cat_dict)
         for cat in row["cat_list"]:
             try: cat_v[cat_dict[cat]] =  1
             except KeyError: pass
-        brand_v = [0] * len(brand_names)
+        brand_v = [0] * len(brand_dict)
         try: brand_v[brand_dict[row["brand_name"]]] = 1
         except KeyError: pass
-        item_v = [0] * len(item_des)
+        item_v = [0] * len(item_dict)
         for word in row["item_description"]:
             try: item_v[item_dict[word]] = 1
             except KeyError: pass

@@ -5,5 +5,4 @@
 #
 # with open('test.csv', 'w') as file:
 #     file.write('test')
-import nltk
-nltk.download()
+train.head(5)
