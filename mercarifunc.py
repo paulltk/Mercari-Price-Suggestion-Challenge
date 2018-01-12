@@ -5,6 +5,8 @@ import statistics
 import heapq
 import re, string
 import time
+from collections import Counter
+from sklearn.decomposition import PCA
 from nltk.stem import WordNetLemmatizer
 
 # Counts uniques in column
@@ -120,7 +122,7 @@ def change_item_description(data):
         if not isinstance(des, str):
             print(des)
         des = des.lower()
-        regex = re.compile('[' + re.escape(string.punctuation) + '\\r\\t\\n]')
+        regex = re.compile('[' + re.escape(string.punctuation) + '\\r\\t\\n ]')
         txt = regex.sub(" ", des)
         words = [wnlm.lemmatize(w) for w in txt.split(" ") if w not in stopwords]
         data.set_value(index, "item_description", words)
@@ -132,7 +134,7 @@ def fill_missing_items(data):
     data["brand_name"].fillna("missing", inplace=True)
     data["item_description"].fillna("missing", inplace=True)
 
-def lists_for_vector(data):
+def lists_for_vector(data, thres=3):
     categories = []
     item_des = []
     brand_names = []
@@ -145,6 +147,9 @@ def lists_for_vector(data):
             print(index)
         item_des += row["item_description"]
         brand_names.append(row["brand_name"])
+    print(time.time() - start)
+    des_count = Counter(item_des)
+    item_des = [word for word in des_count if des_count[word] > thres]
     print(time.time() - start)
     return list(set(item_des)), list(set(categories)), list(set(brand_names))
 
