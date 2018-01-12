@@ -26,7 +26,7 @@ change_item_description(data)
 print(time.time() - start)
 split_categories(data)
 print(time.time() - start)
-item_des, categories, brand_names = lists_for_vector(data)
+item_des, categories, brand_names = lists_for_vector(data, thres=25)
 print(len(item_des))
 
 
