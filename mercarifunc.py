@@ -5,6 +5,7 @@ import statistics
 import heapq
 import re, string
 import time
+from nltk.stem import WordNetLemmatizer
 
 # Counts uniques in column
 def count_uniques(data, column):
@@ -104,44 +105,53 @@ def split_categories(data):
 
 # replaces the item description with
 def change_item_description(data):
+    wnlm = WordNetLemmatizer()
+    stopwords = set("""rm i me my myself we our ours ourselves you your yours yourself yourselves he him 
+            his himself she her hers herself it its itself they them their theirs themselves what which who whom 
+            this that these those am is are was were be been being have has had having do does did doing a an the 
+            and but if or because as until while of at by for with about against between into through during before 
+            after above below to from up down in out on off over under again further then once here there when where 
+            why how all any both each few more most other some such no nor not only own same so than too very s t can 
+            will just don should now""".split(" "))
     for index, row in data.iterrows():
-        if isinstance(row["item_description"], list) == True:
+        if isinstance(row["item_description"], list):
             continue
         des = row["item_description"]
+        if not isinstance(des, str):
+            print(des)
         des = des.lower()
         regex = re.compile('[' + re.escape(string.punctuation) + '\\r\\t\\n]')
         txt = regex.sub(" ", des)
-        stopwords = """rm i me my myself we our ours ourselves you your yours yourself yourselves he him 
-        his himself she her hers herself it its itself they them their theirs themselves what which who whom 
-        this that these those am is are was were be been being have has had having do does did doing a an the 
-        and but if or because as until while of at by for with about against between into through during before 
-        after above below to from up down in out on off over under again further then once here there when where 
-        why how all any both each few more most other some such no nor not only own same so than too very s t can 
-        will just don should now"""
-        words = [w for w in txt.split(" ") \
-                 if not w in stopwords]
+        words = [wnlm.lemmatize(w) for w in txt.split(" ") if w not in stopwords]
         data.set_value(index, "item_description", words)
-
 
 def fill_missing_brand_names(data):
     data["brand_name"].fillna("missing", inplace=True)
 
+def fill_missing_items(data):
+    data["brand_name"].fillna("missing", inplace=True)
+    data["item_description"].fillna("missing", inplace=True)
 
 def lists_for_vector(data):
     categories = []
     item_des = []
     brand_names = []
+    start = time.time()
+    print(time.time() - start)
     for index, row in data.iterrows():
         #print(row["first_cat"])
-        for cat in (row["cat_list"]):
-            categories.append(cat)
-        if isinstance(row["item_description"], str) == True:
+        categories += row["cat_list"]
+        if isinstance(row["item_description"], str):
             print(index)
-        item_des = item_des + row["item_description"]
+        item_des += row["item_description"]
         brand_names.append(row["brand_name"])
+    print(time.time() - start)
     item_des = list(set(item_des))
     categories = list(set(categories))
     return item_des, categories, brand_names
+
+def list_to_dict(lst):
+    return {k: v for v, k in enumerate(lst)}
 
 def instances_into_vectors(data):
     """The vector is build out of the following elements: categories, brand name, item description,
@@ -150,6 +160,7 @@ def instances_into_vectors(data):
     is on index 500, the boolean on the index 100+500 of the vector will be set to 1"""
     print(time.time())
     item_des, categories, brand_names = lists_for_vector(data)
+    item_dict, cat_dict, brand_dict = list_to_dict(item_des), list_to_dict(categories), list_to_dict(brand_names)
     print(time.time())
     nodes = len(item_des) + len(categories) + len(brand_names) + 6
     #print(nodes)
@@ -159,13 +170,37 @@ def instances_into_vectors(data):
     #print(item_des)
     #print(categories)
     for index, row in data.iterrows():
-        vector = []
-        cat_v = [1 if cat in row["cat_list"] else 0 for cat in categories]
-        brand_v = [1 if brand in row["brand_name"] else 0 for brand in brand_names]
-        item_v = [1 if word in row["item_description"] else 0 for word in item_des]
+        cat_v = [0] * len(categories)
+        for cat in row["cat_list"]:
+            try: cat_v[cat_dict[cat]] =  1
+            except KeyError: pass
+        brand_v = [0] * len(brand_names)
+        try: brand_v[brand_dict[row["brand_name"]]] = 1
+        except KeyError: pass
+        item_v = [0] * len(item_des)
+        for word in row["item_description"]:
+            try: item_v[item_dict[word]] = 1
+            except KeyError: pass
+        #cat_v = [1 if cat in row["cat_list"] else 0 for cat in categories]
+        #brand_v = [1 if brand in row["brand_name"] else 0 for brand in brand_names]
+        #item_v = [1 if word in row["item_description"] else 0 for word in item_des]
         cond_v = [0, 0, 0, 0, 0]
         cond_v[row["item_condition_id"]-1] = 1
         vector = cat_v + brand_v + item_v + cond_v + [row["shipping"]]
         matrix[index] = vector
     print(time.time())
     return matrix
+
+def vector_to_csv(data, path):
+    change_item_description(data)
+    split_categories(data)
+    fill_missing_brand_names(data)
+    item_des, categories, brand_names = lists_for_vector(data)
+    with open(path, 'w') as vec_file:
+        for i, cat in enumerate(categories):
+            vec_file.write(str(i) + "," + cat + "\n")
+        for i, brand in enumerate(brand_names):
+            vec_file.write(str(i) + "," + brand + "\n")
+        for i, word in enumerate(item_des):
+            vec_file.write(str(i) + "," + word + "\n")
+    pass

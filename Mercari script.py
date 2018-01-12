@@ -5,6 +5,7 @@ import statistics
 import heapq
 import re, string
 import time
+import nltk
 from mercarifunc import *
 
 path = "C:\\Users\pault\OneDrive\Documenten\GitHub\input" # pauls path
@@ -20,7 +21,7 @@ print("test size:", test.shape)
 sample = train.loc[0:1000]
 
 
-sample1 = train.loc[0:999]
+sample1 = train.loc[0:10000]
 change_item_description(sample1)
 split_categories(sample1)
 fill_missing_brand_names(sample1)
