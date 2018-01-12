@@ -146,9 +146,7 @@ def lists_for_vector(data):
         item_des += row["item_description"]
         brand_names.append(row["brand_name"])
     print(time.time() - start)
-    item_des = list(set(item_des))
-    categories = list(set(categories))
-    return item_des, categories, brand_names
+    return list(set(item_des)), list(set(categories)), list(set(brand_names))
 
 def list_to_dict(lst):
     return {k: v for v, k in enumerate(lst)}
