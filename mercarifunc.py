@@ -98,7 +98,7 @@ def instances_into_vectors(data, item_dict, cat_dict, brand_dict):
         cond_v[row["item_condition_id"]-1] = 1
         vector = cat_v + brand_v + item_v + cond_v + [row["shipping"]]
         matrix[index] = vector
-    print("instances to vector time:", time.time() -s)
+    print("instances to vector time:", time.time() - s)
     return matrix
 
 def vector_to_csv(data, path):
