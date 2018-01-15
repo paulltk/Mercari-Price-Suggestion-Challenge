@@ -37,13 +37,8 @@ def change_item_description(data):
             why how all any both each few more most other some such no nor not only own same so than too very s t can 
             will just don should now""".split(" "))
     for index, row in data.iterrows():
-        if isinstance(row["item_description"], list):
-            continue
         des = row["item_description"]
-        if not isinstance(des, str):
-            print(des)
         des = des.lower()
-        regex = re.compile('[' + re.escape(string.punctuation) + '\\r\\t\\n ]')
-        txt = regex.sub(" ", des)
-        words = [wnlm.lemmatize(w) for w in txt.split(" ") if w not in stopwords]
+        txt = re.sub("[^0-9a-zA-Z ]", "", des)
+        words = [wnlm.lemmatize(w) for w in txt.split(" ") if w not in stopwords and len(w) > 2]
         data.set_value(index, "item_description", words)

@@ -24,13 +24,14 @@ print("train size:", train.shape)
 test = pd.read_csv('test.tsv', delimiter='\t', encoding='utf-8')
 print("test size:", test.shape)
 
-data = train.loc[:50000]
-valdata = train.loc[50000:100000]
+data = train.loc[:1000000]
+valdata = train.loc[10000:20000]
 
 start = time.time()
 edit_data(data)
 print("Edited data:", time.time() - start)
-item_dict, cat_dict, brand_dict = get_dicts(data)
+item_dict, cat_dict, brand_dict = get_dicts(data, 5)
+print(len(item_dict), len(cat_dict), len(brand_dict))
 print("Make dicts:", time.time() - start)
 matrix = vectorize_data(data, item_dict, cat_dict, brand_dict)
 print("Made matrix:", time.time() - start, "matrix size:", matrix.shape)

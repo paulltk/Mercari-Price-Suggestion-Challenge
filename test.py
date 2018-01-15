@@ -1,14 +1,6 @@
-# foo = "missing cats"
-#
-# for x in foo:
-#     print(x)
-#
-# with open('test.csv', 'w') as file:
-#     file.write('test')
-path = "C:\\Users\pault\OneDrive\Documenten\GitHub\input" # pauls path
-#path = "/home/afalbrecht/Documents/Leren en Beslissen/" #add your path here, dit is een test
-os.chdir(path)
+import re
+a = re.sub("[^0-9a-zA-Z ]",        # Anything except 0..9, a..z and A..Z
+       "",                    # replaced with nothing
+       "this is a test!!")    # in this string
 
-train = pd.read_csv('train.tsv', delimiter='\t', encoding='utf-8')
-data = train.loc[:11000]
-prices = get_price_list(data[:10000])
+print(a)
