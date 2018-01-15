@@ -11,6 +11,7 @@ from sklearn.decomposition import PCA
 from nltk.stem import WordNetLemmatizer
 from sklearn.neural_network import MLPClassifier
 from mercarifunc import *
+from pre-processing.py import *
 
 path = "C:\\Users\pault\OneDrive\Documenten\GitHub\input" # pauls path
 #path = "/home/afalbrecht/Documents/Leren en Beslissen/" #add your path here, dit is een test
