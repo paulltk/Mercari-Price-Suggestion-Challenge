@@ -7,7 +7,7 @@ import re, string
 import time
 from nltk.stem import WordNetLemmatizer
 import csv
-from mercarifunc import *
+from otherfunc import *
 
 path = "/home/afalbrecht/Documents/Leren en Beslissen/" #add your path here, dit is een test
 os.chdir(path)

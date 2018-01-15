@@ -1,3 +1,8 @@
+import pandas as pd
+from nltk.stem import WordNetLemmatizer
+import re
+import string
+
 def edit_data(data):
     split_categories(data)
     fill_missing_items(data)
