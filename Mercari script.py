@@ -13,7 +13,6 @@ from sklearn.neural_network import MLPClassifier
 from otherfunc import *
 from preprocessing import *
 from vectorize import *
-from neuralnetwork import *
 
 path = "C:\\Users\pault\OneDrive\Documenten\GitHub\input"
 #path = "/home/afalbrecht/Documents/Leren en Beslissen/"
@@ -24,7 +23,7 @@ print("train size:", train.shape)
 test = pd.read_csv('test.tsv', delimiter='\t', encoding='utf-8')
 print("test size:", test.shape)
 
-data = train.loc[:1000000]
+data = train.loc[:100000]
 valdata = train.loc[10000:20000]
 
 start = time.time()
@@ -46,18 +45,16 @@ valprices = get_price_list(valdata)
 print("Valprice list:", time.time() - start, "valprice size:", len(valprices))
 
 
-neuralnet = fit_data(matrix, prices)
+neuralnet = MLPClassifier(activation='relu', alpha=1e-04, batch_size='auto',
+                        beta_1=0.9, beta_2=0.999, early_stopping=False,
+                        epsilon=1e-08, hidden_layer_sizes=(15,), learning_rate='constant',
+                        learning_rate_init=0.001, max_iter=200, momentum=0.9,
+                        nesterovs_momentum=True, power_t=0.5, random_state=1, shuffle=True,
+                        solver='adam', tol=0.0001, validation_fraction=0.1, verbose=False,
+                        warm_start=False)
+neuralnet.fit(matrix, prices)
 print('Model fitted', time.time() - start)
 predicted_prices = neuralnet.predict(valmatrix)
 print('Prices predicted', time.time() - start)
-
-# a = 0
-# i = 0
-# for price, pre_price in zip(prices, predicted_prices):
-#     if a <300:
-#         print(i, price, pre_price)
-#         print(data.get_value(i, "item_description"))
-#         a += 1
-#         i += 1
 
 print("The score is:", calc_score(valprices, predicted_prices))
