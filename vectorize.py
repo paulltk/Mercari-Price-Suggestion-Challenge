@@ -38,7 +38,7 @@ def instances_into_vectors(data, item_dict, cat_dict, brand_dict):
     item condition and shipping. We have a list with all categories, a list with all brand names,
     same for item description. If categories is 1000 long, and brand name 2000, and the brand of an instance
     is on index 500, the boolean on the index 100+500 of the vector will be set to 1"""
-    nodes = len(item_dict) + len(cat_dict) + len(brand_dict) + 6
+    nodes = len(cat_dict) + len(brand_dict) + 6 + len(item_dict)
     matrix = np.empty((data.shape[0], nodes))
     #s = time.time()
     i = 0
@@ -56,7 +56,7 @@ def instances_into_vectors(data, item_dict, cat_dict, brand_dict):
             except KeyError: pass
         cond_v = [0, 0, 0, 0, 0]
         cond_v[row["item_condition_id"]-1] = 1
-        vector = cat_v + brand_v + item_v + cond_v + [row["shipping"]]
+        vector = cat_v + brand_v + cond_v + [row["shipping"]] + item_v
         matrix[i] = vector
         i += 1
     #print("instances to vector time:", time.time() - s)

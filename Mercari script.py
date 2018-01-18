@@ -24,7 +24,9 @@ print("train size:", train.shape)
 test = pd.read_csv('test.tsv', delimiter='\t', encoding='utf-8')
 print("test size:", test.shape)
 
-train = train.loc[0:100000]
+data = train.loc[:100000]
+valdata = train.loc[10000:20000]
+
 start = time.time()
 edit_data(train)
 print("Edited data:", time.time() - start)
@@ -48,6 +50,9 @@ print("Made matrix:", time.time() - start, "matrix size:", matrix.shape)
 prices = get_price_list(data)
 print("price list:", time.time() - start, "price size:", len(prices))
 
+pca_mat, pca = fit_PCA(matrix, 0.5)
+print('PCA mat shape:', pca_mat.shape)
+
 edit_data(valdata)
 print("Edited valdata:", time.time() - start)
 valmatrix = vectorize_data(valdata, item_dict, cat_dict, brand_dict)
@@ -55,7 +60,10 @@ valmatrix = vectorize_data(valdata, item_dict, cat_dict, brand_dict)
 
 print("Made valmatrix:", time.time() - start, "valmatrix size:", valmatrix.shape)
 valprices = get_price_list(valdata)
-print("Valprice list    :", time.time() - start, "valprice size:", len(valprices))
+print("Valprice list:", time.time() - start, "valprice size:", len(valprices))
+
+valmat = test_PCA(valmatrix, pca)
+print('PCA valmat shape:', valmat.shape)
 
 neuralnet = MLPClassifier(activation='relu', alpha=1e-04, batch_size='auto',
                         beta_1=0.9, beta_2=0.999, early_stopping=False,
@@ -90,8 +98,10 @@ matrix = vectorize_data(data, item_dict, cat_dict, brand_dict)
 print("Made matrix:", time.time() - start, "matrix size:", matrix.shape)
 
 neuralnet.fit(matrix, prices)
+
+neuralnet = fit_data(pca_mat, prices)
 print('Model fitted', time.time() - start)
-predicted_prices = neuralnet.predict(valmatrix)
+predicted_prices = neuralnet.predict(valmat)
 print('Prices predicted', time.time() - start)
 
 print("The score is:", calc_score(valprices, predicted_prices))

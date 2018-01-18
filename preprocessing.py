@@ -2,6 +2,18 @@ import pandas as pd
 from nltk.stem import WordNetLemmatizer
 import re
 import string
+from sklearn.decomposition import PCA
+
+
+def fit_PCA(matrix, ratio):
+    """ Fit PCA to matrix to a ratio between 0 and 1 and return pca with SVD in it"""
+    pca = PCA(n_components=int(matrix.shape[1]*ratio))
+    pca_mat = pca.fit_transform(matrix)
+    return pca_mat, pca
+
+def test_PCA(matrix, pca):
+    """ Run PCA on a matrix using a previously calculated SVD"""
+    return pca.transform(matrix)
 
 def edit_data(data):
     split_categories(data)
