@@ -25,3 +25,55 @@ C:\Code Languages\Anaconda3\lib\site-packages\sklearn\neural_network\multilayer_
 Model fitted 74.02355885505676
 Prices predicted 74.13936734199524
 The score is: 0.7340363082317978
+
+Edited data: 4.372318267822266
+3169 562 762
+Make dicts: 5.0626137256622314
+Made matrix: 9.227866411209106 matrix size: (10001, 4499)
+Saved matrix: 29.893048763275146
+
+"C:\Code Languages\Anaconda3\python.exe" "C:/Users/pault/PycharmProjects/Mercari/New Mercari script.py"
+train size: (1482535, 8)
+split cat 0.12498974800109863
+fill missing 0.15624403953552246
+make words 3.000288724899292
+append 3.0315399169921875
+8739 790 2068
+1516207647.011349
+made matrix 9.361834287643433
+C:\Code Languages\Anaconda3\lib\site-packages\sklearn\neural_network\multilayer_perceptron.py:564: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (20) reached and the optimization hasn't converged yet.
+  % self.max_iter, ConvergenceWarning)
+fit matrix 36.58445978164673
+Traceback (most recent call last):
+  File "C:/Users/pault/PycharmProjects/Mercari/New Mercari script.py", line 130, in <module>
+predict m 37.03758907318115
+    print("The score is:", calc_score(prices, predicted_prices))
+  File "C:/Users/pault/PycharmProjects/Mercari/New Mercari script.py", line 86, in calc_score
+    summ += (math.log(int(pre_price)+1) - math.log(int(price)+1))**2
+NameError: name 'math' is not defined
+
+
+
+
+
+
+
+
+
+
+"C:\Code Languages\Anaconda3\python.exe" "C:/Users/pault/PycharmProjects/Mercari/New Mercari script.py"
+train size: (1482535, 8)
+split cat 0.1223602294921875
+fill missing 0.14191222190856934
+make words 3.2063772678375244
+append 3.2352898120880127
+8739 790 2068
+1516207792.4778874
+made matrix 4.092835426330566
+C:\Code Languages\Anaconda3\lib\site-packages\sklearn\neural_network\multilayer_perceptron.py:564: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (20) reached and the optimization hasn't converged yet.
+  % self.max_iter, ConvergenceWarning)
+fit matrix 51.31300330162048
+predict m 57.02969813346863
+The score is: 0.7279690208371179
+
+Process finished with exit code 0
