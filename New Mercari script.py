@@ -22,6 +22,6 @@ i = 0
 for index, row in train.iterrows():
     print(row["item_description"])
     #v = make_vector(row, description_dict, categories_dict, brand_dict)
-    
+
 
 print(time.time() -start)
