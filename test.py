@@ -127,25 +127,12 @@
 # #     print("append", time.time() - start)
 # #     return list_to_dict(words), list_to_dict(list(set(categories))), list_to_dict(list(set(brand_names)))
 # #
-# dict = {"a": 6, "b": 10}
+dict = {"a": 6, "b": 10}
 #
-# v = [0] * 20
 #
-# a = ["g", "a"]
-#
-# for i in a:
-#     try: v[dict[i]] = 1
-#     except: pass
-#
-# print(v)
-#
+# v
+l = ['a', 'aa', 'b']
 
-m = []
+p = [dict[s] for s in l if s in dict]
 
-a = [1, 2]
-b = [3, 4]
-
-m.append(a)
-m.append(b)
-
-print(m)
+print(p)
