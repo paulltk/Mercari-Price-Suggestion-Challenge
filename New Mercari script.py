@@ -98,16 +98,32 @@ data = train.loc[0:9999]
 
 start = time.time()
 
-print(start)
+# print("make matrix", start)
+#
+# matrix = np.empty([10000, vector_len])
+# for index, row in data.iterrows():
+#     v = make_vector(row, description_dict, categories_dict, brand_dict)
+#     matrix[index] = v
+#
+# prices = get_price_list(data)
+#
+# print("made matrix", time.time() - start)
+#
+# start = time.time()
 
-matrix = np.empty([10000, vector_len])
+print("make v's", start)
+
+matrix = []
 for index, row in data.iterrows():
     v = make_vector(row, description_dict, categories_dict, brand_dict)
-    matrix[index] = v
+    #matrix[index] = v
+    matrix.append(v)
+matrix = np.asarray(matrix)
 
 prices = get_price_list(data)
 
 print("made matrix", time.time() - start)
+
 
 neuralnet = MLPClassifier(activation='relu', alpha=1e-04, batch_size='auto',
                         beta_1=0.9, beta_2=0.999, early_stopping=False,
@@ -116,10 +132,6 @@ neuralnet = MLPClassifier(activation='relu', alpha=1e-04, batch_size='auto',
                         nesterovs_momentum=True, power_t=0.5, random_state=1, shuffle=True,
                         solver='adam', tol=0.0001, validation_fraction=0.1, verbose=False,
                         warm_start=True)
-
-
-#for i in range(5):
-
 
 neuralnet.fit(matrix, prices)
 
