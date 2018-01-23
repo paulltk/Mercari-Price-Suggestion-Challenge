@@ -9,7 +9,7 @@ path = "C:\\Users\pault\OneDrive\Documenten\GitHub\input"
 os.chdir(path)
 
 train = pd.read_csv('train.tsv', delimiter='\t', encoding='utf-8')
-train = train[train["price"] != 0] # Drops rows with price = 0
+train = train[train["price"] != 0]  # Drops rows with price = 0
 train.index = range(len(train))
 print("train size:", train.shape)
 
