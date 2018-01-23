@@ -38,6 +38,8 @@ def fill_missing_items(data):
     data["brand_name"].fillna("missing", inplace=True)
     data["item_description"].fillna("missing", inplace=True)
 
+
+
 # replaces the item description with
 def change_item_description(data):
     wnlm = WordNetLemmatizer()

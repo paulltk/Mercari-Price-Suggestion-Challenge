@@ -68,3 +68,11 @@ def get_price_list(data):
     for index, row in data.iterrows():
         lst.append(int(row["price"]))
     return lst
+
+# Replaces missing brand names with brand from item_description
+def replace_missing_brands(data, brand_dict):
+    for index, row in data.iterrows():
+        if row["brand_name"] == 'missing':
+            for word in row["item_description"]:
+                if word in brand_dict:
+                    data.at[data.index[index], "brand_name"] = word
