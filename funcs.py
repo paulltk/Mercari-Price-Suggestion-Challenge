@@ -5,6 +5,7 @@ from collections import Counter
 import re
 from sklearn.neural_network import MLPClassifier
 import math
+from scipy import sparse
 
 def fill_missing_items(data):
     data["brand_name"].fillna("missing", inplace=True)
@@ -36,7 +37,6 @@ def edit_data_make_dicts(data):
     print("fill missing", time.time() - start)
     words = words_list(data)
     words_dict = list_to_dict(words)
-    print(words_dict)
     print("make words", time.time() - start)
     categories = []
     brand_names = []
@@ -47,38 +47,6 @@ def edit_data_make_dicts(data):
         brand_names.append(brand)
     print("append", time.time() - start)
     return list_to_dict(words), list_to_dict(list(set(categories))), list_to_dict(list(set(brand_names)))
-
-
-# def make_vector(row, description_dict, categories_dict, brand_dict):
-#     cat_v = [0] * len(categories_dict)
-#     for cat in row["category_name"]:
-#         if cat in categories_dict:
-#             cat_v[categories_dict[cat]] = 1
-#     brand_v = [0] * len(brand_dict)
-#     if row["brand_name"] in brand_dict:
-#         brand_v[brand_dict[row["brand_name"]]] = 1
-#     item_v = [0] * len(description_dict)
-#     for word in row["item_description"]:
-#         if word in description_dict:
-#             item_v[description_dict[word]] = 1
-#     cond_v = [0, 0, 0, 0, 0]
-#     cond_v[row["item_condition_id"] - 1] = 1
-#     vector = cat_v + brand_v + item_v + cond_v + [row["shipping"]]
-#     return vector
-
-def make_vector(row, description_dict, categories_dict, brand_dict):
-    cat_v = [0] * len(categories_dict)
-    for cat in row["cat_name"]:
-        cat_v[cat] = 1
-    brand_v = [0] * len(brand_dict)
-    brand_v[row["brand"]] = 1
-    item_v = [0] * len(description_dict)
-    for ind in row["item_des"]:
-        item_v[ind] = 1
-    cond_v = [0, 0, 0, 0, 0]
-    cond_v[row["item_condition_id"] - 1] = 1
-    vector = cat_v + brand_v + item_v + cond_v + [row["shipping"]]
-    return vector
 
 
 def get_price_list(data):
@@ -94,37 +62,33 @@ def calc_score(prices, predicted_prices):
         summ += (math.log(int(pre_price)+1) - math.log(int(price)+1))**2
     return math.sqrt(summ / len(prices))
 
+def make_sparse_matrix(data, description_dict, categories_dict, brand_dict):
+    sparse_matrix = sparse.lil_matrix((data.shape[0], len(description_dict) + len(categories_dict) + len(brand_dict) + 6), dtype=bool)
+    print(sparse_matrix.shape)
+    des_len = len(description_dict)
+    cat_len = len(categories_dict)
+    brand_len = len(brand_dict)
 
-def nn_multiple_times(train, i, description_dict, categories_dict, brand_dict):
-    print("Start NN: 0")
-    start = time.time()
-    vector_len = len(description_dict) + len(categories_dict) + len(brand_dict) + 6
+    descriptions_list = data["item_description"].tolist()
+    for i, sen in enumerate(descriptions_list):
+        for word in sen:
+            if word in description_dict:
+                sparse_matrix[i, description_dict[word]] = True
 
-    neuralnet = MLPClassifier(activation='relu', alpha=1e-04, batch_size='auto',
-                              beta_1=0.9, beta_2=0.999, early_stopping=False,
-                              epsilon=1e-08, hidden_layer_sizes=(15,), learning_rate='constant',
-                              learning_rate_init=0.001, max_iter=20, momentum=0.9,
-                              nesterovs_momentum=True, power_t=0.5, random_state=1, shuffle=True,
-                              solver='adam', tol=0.0001, validation_fraction=0.1, verbose=False,
-                              warm_start=False)
+    categories_list = data["category_name"].tolist()
+    for i, categories in enumerate(categories_list):
+        for category in categories:
+            if category in categories_dict:
+                sparse_matrix[i, categories_dict[category] + des_len] = True
 
-    valdata = train.loc[i * 10000:i * 10000 + 9999]
-    valmatrix = np.empty([10000, vector_len])
-    for index, row in valdata.iterrows():
-        v = make_vector(row, description_dict, categories_dict, brand_dict)
-        valmatrix[index-i*10000] = v
-    print("Made valmatrix:", time.time() - start)
-
-    for t in range(i):
-        data = train.loc[t*10000:t*10000+9999]
-        matrix = np.empty([10000, vector_len])
-        for index, row in data.iterrows():
-            v = make_vector(row, description_dict, categories_dict, brand_dict)
-            matrix[index-t*10000] = v
-        print("Made matrix", t, "in:", time.time() - start, matrix.shape)
-        prices = get_price_list(data)
-        neuralnet.fit(matrix, prices)
-        print("Fitted matrix:", time.time() - start)
-
-        predicted_prices = neuralnet.predict(valmatrix)
-        print("The score is:", calc_score(prices, predicted_prices))
+    brand_list = data["brand_name"].tolist()
+    for i, brand in enumerate(brand_list):
+        if brand in brand_dict:
+            sparse_matrix[i, brand_dict[brand] + des_len + cat_len] = True
+    condition_list = data["item_condition_id"].tolist()
+    for i, condition in enumerate(condition_list):
+        sparse_matrix[i, des_len + cat_len + brand_len + condition - 1] = True
+    shipping_list = data["shipping"].tolist()
+    for i, shipping in enumerate(shipping_list):
+        sparse_matrix[i, des_len + cat_len + brand_len + 5] = shipping
+    return sparse_matrix
