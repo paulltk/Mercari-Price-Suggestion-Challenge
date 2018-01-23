@@ -13,40 +13,55 @@ def fill_missing_items(data):
     data["category_name"].fillna("missing", inplace=True)
 
 
-def list_to_dict(lst):
-    return {k: v for v, k in enumerate(lst)}
+def edit_description_column(text):
+    words = re.sub("[^a-z0-9 .]", "", text.lower())
+    words = re.sub(r'(?<!\d)\.(?!\d)', '', words)
+    return [word for word in words.split() if len(word) > 3]
 
 
-def words_list(data):
-    words = []
-    data["item_description"] = data["item_description"].str.split()
-    descr_list = data["item_description"].tolist()
-    for sen in descr_list:
-        for word in sen:
-            if len(word) > 3:
-                words.append(re.sub("[^0-9a-z]", "", word.lower()))
-    count = Counter(words)
-    return list(set([w for w in words if count[w] > 10]))  # list with words
+def lower_string(text):
+    return text.lower()
 
 
-def edit_data_make_dicts(data):
-    start = time.time()
-    data["category_name"] = data["category_name"].str.split("/")
-    print("split cat", time.time() - start)
+def edit_data(data):
     fill_missing_items(data)
-    print("fill missing", time.time() - start)
-    words = words_list(data)
-    words_dict = list_to_dict(words)
-    print("make words", time.time() - start)
+    train["item_description"] = train["item_description"].apply(edit_description_column)
+    train["category_name"] = train["category_name"].apply(lower_string)
+    train["category_name"] = train["category_name"].str.split("/")
+    train["brand_name"] = train["brand_name"].apply(lower_string)
+
+
+def make_dictionaries(data):
+    words_list = []
+    description_list = data["item_description"].tolist()
+    for sen in description_list:
+        for word in sen:
+            words_list.append(word)
+    count = Counter(words_list)
+    print("count", count["rmsh" ])
+    des_list = list(set([w for w in words_list if count[w] > 20]))
+    print(len(des_list))
+    print("des list", time.time() - start)
+    description_dict = {k: v for v, k in enumerate(des_list)}
+    print("des dict", time.time() - start)
+
     categories = []
-    brand_names = []
     for cats in data["category_name"]:
         if cats == cats:
             categories += cats
+    print("cat list", time.time() - start)
+    category_dict = {k: v for v, k in enumerate(categories)}
+    print("cat dict", time.time() - start)
+
+    brand_names = []
     for brand in data["brand_name"]:
         brand_names.append(brand)
-    print("append", time.time() - start)
-    return list_to_dict(words), list_to_dict(list(set(categories))), list_to_dict(list(set(brand_names)))
+    print("brand list", time.time() - start)
+    count = Counter(brand_names)
+    brand_list = [b for b in brand_names if count[b] > 2]
+    brand_dict = {k: v for v, k in enumerate(brand_list)}
+    print("brand dict", time.time() - start)
+    return description_dict, category_dict, brand_dict
 
 
 def get_price_list(data):

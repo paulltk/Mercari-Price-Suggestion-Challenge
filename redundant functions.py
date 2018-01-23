@@ -170,3 +170,41 @@ def nn_multiple_times(train, i, description_dict, categories_dict, brand_dict):
 
         predicted_prices = neuralnet.predict(valmatrix)
         print("The score is:", calc_score(prices, predicted_prices))
+
+        def fill_missing_items(data):
+            data["brand_name"].fillna("missing", inplace=True)
+            data["item_description"].fillna("missing", inplace=True)
+            data["category_name"].fillna("missing", inplace=True)
+
+        def list_to_dict(lst):
+            return {k: v for v, k in enumerate(lst)}
+
+        def words_list(data):
+            words = []
+            data["item_description"] = data["item_description"].str.split()
+            descr_list = data["item_description"].tolist()
+            for sen in descr_list:
+                for word in sen:
+                    if len(word) > 3:
+                        words.append(re.sub("[^0-9a-z]", "", word.lower()))
+            count = Counter(words)
+            return list(set([w for w in words if count[w] > 10]))  # list with words
+
+        def edit_data_make_dicts(data):
+            start = time.time()
+            data["category_name"] = data["category_name"].str.split("/")
+            print("split cat", time.time() - start)
+            fill_missing_items(data)
+            print("fill missing", time.time() - start)
+            words = words_list(data)
+            words_dict = list_to_dict(words)
+            print("make words", time.time() - start)
+            categories = []
+            brand_names = []
+            for cats in data["category_name"]:
+                if cats == cats:
+                    categories += cats
+            for brand in data["brand_name"]:
+                brand_names.append(brand)
+            print("append", time.time() - start)
+            return list_to_dict(words), list_to_dict(list(set(categories))), list_to_dict(list(set(brand_names)))
