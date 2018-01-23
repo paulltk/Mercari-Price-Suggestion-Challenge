@@ -49,22 +49,37 @@ def edit_data_make_dicts(data):
     return list_to_dict(words), list_to_dict(list(set(categories))), list_to_dict(list(set(brand_names)))
 
 
+# def make_vector(row, description_dict, categories_dict, brand_dict):
+#     cat_v = [0] * len(categories_dict)
+#     for cat in row["category_name"]:
+#         if cat in categories_dict:
+#             cat_v[categories_dict[cat]] = 1
+#     brand_v = [0] * len(brand_dict)
+#     if row["brand_name"] in brand_dict:
+#         brand_v[brand_dict[row["brand_name"]]] = 1
+#     item_v = [0] * len(description_dict)
+#     for word in row["item_description"]:
+#         if word in description_dict:
+#             item_v[description_dict[word]] = 1
+#     cond_v = [0, 0, 0, 0, 0]
+#     cond_v[row["item_condition_id"] - 1] = 1
+#     vector = cat_v + brand_v + item_v + cond_v + [row["shipping"]]
+#     return vector
+
 def make_vector(row, description_dict, categories_dict, brand_dict):
     cat_v = [0] * len(categories_dict)
-    for cat in row["category_name"]:
-        if cat in categories_dict:
-            cat_v[categories_dict[cat]] = 1
+    for cat in row["cat_name"]:
+        cat_v[cat] = 1
     brand_v = [0] * len(brand_dict)
-    if row["brand_name"] in brand_dict:
-        brand_v[brand_dict[row["brand_name"]]] = 1
+    brand_v[row["brand"]] = 1
     item_v = [0] * len(description_dict)
-    for word in row["item_description"]:
-        if word in description_dict:
-            item_v[description_dict[word]] = 1
+    for ind in row["item_des"]:
+        item_v[ind] = 1
     cond_v = [0, 0, 0, 0, 0]
     cond_v[row["item_condition_id"] - 1] = 1
     vector = cat_v + brand_v + item_v + cond_v + [row["shipping"]]
     return vector
+
 
 def get_price_list(data):
     lst = []
