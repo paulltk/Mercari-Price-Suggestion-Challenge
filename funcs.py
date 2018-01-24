@@ -32,6 +32,7 @@ def edit_data(data):
 
 
 def make_dictionaries(data):
+    start = time.time()
     words_list = []
     description_list = data["item_description"].tolist()
     for sen in description_list:
@@ -71,12 +72,12 @@ def get_price_list(data):
     return np.array(lst)
 
 # Replaces missing brand names with brand from item_description
-# def replace_missing_brands(data, brand_dict):
-#     for index, row in data.iterrows():
-#         if row["brand_name"] == 'missing':
-#             for word in row["item_description"]:
-#                 if word in brand_dict:
-#                     data.at[data.index[index], "brand_name"] = word
+def replace_missing_brands(data, brand_dict):
+    for index, row in data.iterrows():
+        if row["brand_name"] == 'missing':
+            for word in row["item_description"]:
+                if word in brand_dict:
+                    data.at[data.index[index], "brand_name"] = word
 
 
 def calc_score(prices, predicted_prices):
