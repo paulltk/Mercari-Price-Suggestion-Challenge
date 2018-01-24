@@ -25,13 +25,14 @@ def lower_string(text):
 
 def edit_data(data):
     fill_missing_items(data)
-    train["item_description"] = train["item_description"].apply(edit_description_column)
-    train["category_name"] = train["category_name"].apply(lower_string)
-    train["category_name"] = train["category_name"].str.split("/")
-    train["brand_name"] = train["brand_name"].apply(lower_string)
+    data["item_description"] = data["item_description"].apply(edit_description_column)
+    data["category_name"] = data["category_name"].apply(lower_string)
+    data["category_name"] = data["category_name"].str.split("/")
+    data["brand_name"] = data["brand_name"].apply(lower_string)
 
 
 def make_dictionaries(data):
+    start = time.time()
     words_list = []
     description_list = data["item_description"].tolist()
     for sen in description_list:
@@ -49,8 +50,8 @@ def make_dictionaries(data):
     for cats in data["category_name"]:
         if cats == cats:
             categories += cats
-    print("cat list", time.time() - start)
-    category_dict = {k: v for v, k in enumerate(categories)}
+    print("cat list", time.time() - start, len(categories))
+    category_dict = {k: v for v, k in enumerate(list(set(categories)))}
     print("cat dict", time.time() - start)
 
     brand_names = []
@@ -58,7 +59,7 @@ def make_dictionaries(data):
         brand_names.append(brand)
     print("brand list", time.time() - start)
     count = Counter(brand_names)
-    brand_list = [b for b in brand_names if count[b] > 2]
+    brand_list = list(set([b for b in brand_names if count[b] > 2]))
     brand_dict = {k: v for v, k in enumerate(brand_list)}
     print("brand dict", time.time() - start)
     return description_dict, category_dict, brand_dict
