@@ -208,3 +208,28 @@ def nn_multiple_times(train, i, description_dict, categories_dict, brand_dict):
                 brand_names.append(brand)
             print("append", time.time() - start)
             return list_to_dict(words), list_to_dict(list(set(categories))), list_to_dict(list(set(brand_names)))
+
+
+
+
+
+
+
+
+
+
+
+
+length = {}
+for index, row in train.iterrows():
+    if len(row["item_description"]) in length:
+        length[len(row["item_description"])] += 1
+    else:
+        length[len(row["item_description"])] = 1
+xlength = [key for key in length]
+ylength = [length[key] for key in length]
+print(xlength)
+print(ylength)
+import matplotlib.pyplot as plt
+plt.bar(xlength, ylength)
+plt.show()
