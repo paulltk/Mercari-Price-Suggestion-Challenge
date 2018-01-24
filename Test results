@@ -1,0 +1,79 @@
+With matrix 50.000, with valmatrix 50.000
+
+Edited data: 15.923206329345703
+Make dicts: 21.691349983215332
+Made matrix: 48.0765061378479 matrix size: (50001, 5682)
+price list: 50.2587251663208 price size: 50001
+Edited valdata: 62.79677939414978
+Made valmatrix: 91.08107876777649 valmatrix size: (50001, 5682)
+Valprice list: 93.23541951179504 valprice size: 50001
+Model fitted 605.4692351818085
+Prices predicted 608.4201974868774
+The score is: 0.6888675777775422
+
+With matrix 10.000, with valmatrix 10.000
+
+Edited data: 5.722615718841553
+Make dicts: 6.373311758041382
+Made matrix: 9.188294172286987 matrix size: (10001, 2469)
+price list: 9.704664945602417 price size: 10001
+Edited valdata: 12.40083122253418
+Made valmatrix: 15.10156536102295 valmatrix size: (10001, 2469)
+Valprice list: 15.60434627532959 valprice size: 10001
+C:\Code Languages\Anaconda3\lib\site-packages\sklearn\neural_network\multilayer_perceptron.py:564: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (200) reached and the optimization hasn't converged yet.
+  % self.max_iter, ConvergenceWarning)
+Model fitted 74.02355885505676
+Prices predicted 74.13936734199524
+The score is: 0.7340363082317978
+
+Edited data: 4.372318267822266
+3169 562 762
+Make dicts: 5.0626137256622314
+Made matrix: 9.227866411209106 matrix size: (10001, 4499)
+Saved matrix: 29.893048763275146
+
+"C:\Code Languages\Anaconda3\python.exe" "C:/Users/pault/PycharmProjects/Mercari/New Mercari script.py"
+train size: (1482535, 8)
+split cat 0.12498974800109863
+fill missing 0.15624403953552246
+make words 3.000288724899292
+append 3.0315399169921875
+8739 790 2068
+1516207647.011349
+made matrix 9.361834287643433
+C:\Code Languages\Anaconda3\lib\site-packages\sklearn\neural_network\multilayer_perceptron.py:564: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (20) reached and the optimization hasn't converged yet.
+  % self.max_iter, ConvergenceWarning)
+fit matrix 36.58445978164673
+Traceback (most recent call last):
+  File "C:/Users/pault/PycharmProjects/Mercari/New Mercari script.py", line 130, in <module>
+predict m 37.03758907318115
+    print("The score is:", calc_score(prices, predicted_prices))
+  File "C:/Users/pault/PycharmProjects/Mercari/New Mercari script.py", line 86, in calc_score
+    summ += (math.log(int(pre_price)+1) - math.log(int(price)+1))**2
+NameError: name 'math' is not defined
+
+
+
+
+
+
+
+
+
+
+"C:\Code Languages\Anaconda3\python.exe" "C:/Users/pault/PycharmProjects/Mercari/New Mercari script.py"
+train size: (1482535, 8)
+split cat 0.1223602294921875
+fill missing 0.14191222190856934
+make words 3.2063772678375244
+append 3.2352898120880127
+8739 790 2068
+1516207792.4778874
+made matrix 4.092835426330566
+C:\Code Languages\Anaconda3\lib\site-packages\sklearn\neural_network\multilayer_perceptron.py:564: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (20) reached and the optimization hasn't converged yet.
+  % self.max_iter, ConvergenceWarning)
+fit matrix 51.31300330162048
+predict m 57.02969813346863
+The score is: 0.7279690208371179
+
+Process finished with exit code 0
