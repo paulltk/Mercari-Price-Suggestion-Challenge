@@ -6,6 +6,8 @@ import re, string
 import time
 import math
 from collections import Counter
+
+from email import header
 from sklearn.decomposition import PCA
 from nltk.stem import WordNetLemmatizer
 

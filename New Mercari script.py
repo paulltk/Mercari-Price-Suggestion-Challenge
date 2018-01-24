@@ -1,10 +1,13 @@
 import os
 import nltk
+from sklearn.neural_network import MLPRegressor
+
 from funcs import *
 
-path = "C:\\Users\pault\OneDrive\Documenten\GitHub\input"
+#path = "C:\\Users\pault\OneDrive\Documenten\GitHub\input"
 #path = "/home/afalbrecht/Documents/Leren en Beslissen/"
 #path = "/Users/falksinke/LocalDocs/mercari_project"
+path = "/home/lisa/Documents/leren_beslissen/Merri/"
 #path = "S:\OneDrive\Documenten\GitHub\input"
 
 os.chdir(path)
