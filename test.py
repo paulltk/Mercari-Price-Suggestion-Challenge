@@ -1,6 +1,3 @@
-a  = "a"
-b = "b"
-c = a+b
-print(c)
-c += a
-print(c)
+a = {}
+a["b"] += 1
+print(a)

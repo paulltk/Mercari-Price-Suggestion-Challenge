@@ -1,10 +1,13 @@
 import os
 import nltk
+from sklearn.neural_network import MLPRegressor
+
 from funcs import *
 
-path = "C:\\Users\pault\OneDrive\Documenten\GitHub\input"
+#path = "C:\\Users\pault\OneDrive\Documenten\GitHub\input"
 #path = "/home/afalbrecht/Documents/Leren en Beslissen/"
 #path = "/Users/falksinke/LocalDocs/mercari_project"
+path = "/home/lisa/Documents/leren_beslissen/Merri/"
 #path = "S:\OneDrive\Documenten\GitHub\input"
 
 os.chdir(path)
@@ -16,12 +19,17 @@ print("train size:", train.shape)
 
 start = time.time()
 edit_data(train)
-print(time.time() - start)
-description_dict, category_dict, brand_dict = make_dictionaries(train)
-print(time.time() - start)
-sparse_matrix = make_sparse_matrix(data, description_dict, categories_dict, brand_dict)
-# print(description_dict)
-print(len(description_dict), len(category_dict), len(brand_dict))
+print("edit data", time.time() - start)
+
+# description_dict, category_dict, brand_dict = make_dictionaries(train)
+# #print(category_dict)
+# print(len(description_dict), len(category_dict), len(brand_dict))
+# print("make dictionaries", time.time() - start)
+# sparse_matrix = make_sparse_matrix(train, description_dict, category_dict, brand_dict)
+# print("make sparse matrix", time.time() - start)
+# part = sparse_matrix[0:10000].todense()
+# print("part", time.time()- start)
+# #print(part.shape)
 
 def get_rows(mat, price, rng):
     return mat[rng].todense(), price[rng]

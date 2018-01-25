@@ -39,29 +39,29 @@ def make_dictionaries(data):
         for word in sen:
             words_list.append(word)
     count = Counter(words_list)
-    print("count", count["rmsh" ])
     des_list = list(set([w for w in words_list if count[w] > 20]))
     print(len(des_list))
-    print("des list", time.time() - start)
+    #print("des list", time.time() - start)
     description_dict = {k: v for v, k in enumerate(des_list)}
-    print("des dict", time.time() - start)
+    #print("des dict", time.time() - start)
 
     categories = []
     for cats in data["category_name"]:
         if cats == cats:
             categories += cats
-    print("cat list", time.time() - start, len(categories))
-    category_dict = {k: v for v, k in enumerate(list(set(categories)))}
-    print("cat dict", time.time() - start)
+    categories = list(set(categories))
+    #print("cat list", time.time() - start)
+    category_dict = {k: v for v, k in enumerate(categories)}
+    #print("cat dict", time.time() - start)
 
     brand_names = []
     for brand in data["brand_name"]:
         brand_names.append(brand)
-    print("brand list", time.time() - start)
+    #print("brand list", time.time() - start)
     count = Counter(brand_names)
-    brand_list = list(set([b for b in brand_names if count[b] > 2]))
+    brand_list = set(list([b for b in brand_names if count[b] > 2]))
     brand_dict = {k: v for v, k in enumerate(brand_list)}
-    print("brand dict", time.time() - start)
+    #print("brand dict", time.time() - start)
     return description_dict, category_dict, brand_dict
 
 
@@ -88,10 +88,11 @@ def calc_score(prices, predicted_prices):
 
 def make_sparse_matrix(data, description_dict, categories_dict, brand_dict):
     sparse_matrix = sparse.lil_matrix((data.shape[0], len(description_dict) + len(categories_dict) + len(brand_dict) + 6), dtype=bool)
-    print(sparse_matrix.shape)
+    #print(sparse_matrix.shape)
     des_len = len(description_dict)
     cat_len = len(categories_dict)
     brand_len = len(brand_dict)
+    #print(des_len, cat_len, brand_len)
 
     descriptions_list = data["item_description"].tolist()
     for i, sen in enumerate(descriptions_list):
