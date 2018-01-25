@@ -233,3 +233,73 @@ print(ylength)
 import matplotlib.pyplot as plt
 plt.bar(xlength, ylength)
 plt.show()
+
+
+
+
+
+
+
+
+
+# neuralnet.fit(sparse_matrix[:9000].todense(), prices)
+# # batches = iter_minibatches(sparse_matrix[:9000], prices, chunksize=200)
+# #
+# # count = 0
+# # for X_chunk, y_chunk in batches:
+# #     print(count)
+# #     count += 1
+# #     if len(X_chunk) != 0:
+# #         for i in range(5):
+# #             neuralnet.train_on_batch(X_chunk, y_chunk)
+#
+# valmat = sparse_matrix[9000:10000].todense()
+# valprices = get_price_list(train[9000:10000])
+# print(valmat.shape)
+# print(valprices.shape)
+#
+# predicted_prices = neuralnet.predict(valmat)
+# print('Prices predicted', time.time() - start)
+#
+# print(valprices.shape)
+# print(predicted_prices.shape)
+# print("The score is:", calc_score(valprices, predicted_prices))
+#
+# print(time.time() -start)
+#
+# # vector = cat_v + brand_v + item_v + cond_v + [row["shipping"]]
+# # item_desc = Input(shape=[len(item_desc)], name="item_desc")
+# # brand = Input(shape=[1], name="brand")
+# # category = Input(shape=[1], name="category")
+# # category_name = Input(shape=[X_train["category_name"].shape[1]],
+# #                       name="category_name")
+# # item_condition = Input(shape=[1], name="item_condition")
+# # num_vars = Input(shape=[X_train["num_vars"].shape[1]], name="num_vars")
+
+
+
+
+
+
+
+
+def index_des(row, dict, column_name):
+    a = [dict[word] for word in row[column_name] if word in dict]
+    return a
+
+def brand(row, dict):
+    return brand_dict[row["brand_name"]]
+
+def get_rows(mat, price, rng):
+    return mat[rng].todense(), price[rng]
+
+def iter_minibatches(mat, price, chunksize):
+    # Provide chunks one by one
+    chunkstartmarker = 0
+    while chunkstartmarker < mat.shape[0]:
+        if (mat.shape[0] - chunkstartmarker) < chunksize:
+            chunksize = mat.shape[0] - chunkstartmarker
+        chunkrows = range(chunkstartmarker,chunkstartmarker+chunksize)
+        X_chunk, y_chunk = get_rows(mat, price, chunkrows)
+        yield X_chunk, y_chunk
+        chunkstartmarker += chunksize
