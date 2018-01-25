@@ -6,8 +6,8 @@ from keras import optimizers
 
 def make_model(vec_len):
     model = Sequential()
-    model.add(Dense(32, activation='relu', input_dim=vec_len))
-    model.add(Dense(25, activation='relu'))
+    model.add(Dense(512, activation='relu', input_dim=vec_len))
+    model.add(Dense(96, activation='relu'))
     model.add(Dense(1, activation='linear'))
     model.compile(loss="mse", optimizer=optimizers.Adam())
     return model
@@ -67,15 +67,16 @@ neuralnet = make_model(vec_len)
 
 print("made matrix", time.time() - start)
 
-batches = iter_minibatches(sparse_matrix[:9000], prices, chunksize=200)
-
-count = 0
-for X_chunk, y_chunk in batches:
-    print(count)
-    count += 1
-    if len(X_chunk) != 0:
-        for i in range(5):
-            neuralnet.train_on_batch(X_chunk, y_chunk)
+neuralnet.fit(sparse_matrix[:9000].todense(), prices)
+# batches = iter_minibatches(sparse_matrix[:9000], prices, chunksize=200)
+#
+# count = 0
+# for X_chunk, y_chunk in batches:
+#     print(count)
+#     count += 1
+#     if len(X_chunk) != 0:
+#         for i in range(5):
+#             neuralnet.train_on_batch(X_chunk, y_chunk)
 
 valmat = sparse_matrix[9000:].todense()
 valprices = get_price_list(train[9000:10000])
