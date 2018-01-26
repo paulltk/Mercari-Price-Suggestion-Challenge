@@ -3,14 +3,19 @@ from funcs import *
 from keras.models import Sequential
 from keras.layers import Dense, Activation
 from keras import optimizers
+from keras import backend as K
 
 def make_model(vec_len):
     model = Sequential()
     model.add(Dense(512, activation='relu', input_dim=vec_len))
     model.add(Dense(96, activation='relu'))
     model.add(Dense(1, activation='linear'))
-    model.compile(loss="msle", optimizer=optimizers.Adam())
+    model.compile(loss='msle', optimizer=optimizers.Adam())
+#    model.compile(loss=RMSLE, optimizer=optimizers.Adam())
     return model
+
+def RMSLE(y_true, y_pred):
+    return K.sqrt(K.mean(K.square(K.log(y_pred + 1) - K.log(y_true + 1)), axis=-1))
 
 ########################################################################################
 ########################################################################################
@@ -18,7 +23,7 @@ def make_model(vec_len):
 path = "C:\\Users\pault\OneDrive\Documenten\GitHub\input"
 # path = "/home/afalbrecht/Documents/Leren en Beslissen/"
 #path = "S:\OneDrive\Documenten\GitHub\input"
-path = "/home/lisa/Documents/leren_beslissen/Merri/"
+#path = "/home/lisa/Documents/leren_beslissen/Merri/"
 
 
 os.chdir(path)
@@ -29,7 +34,7 @@ train = pd.read_csv('train.tsv', delimiter='\t', encoding='utf-8')
 train = train[train["price"] < 300]
 train = train[train["price"] != 0]  # Drops rows with price = 0
 train.index = range(len(train))
-#train = train.loc[0:100000]
+# train = train.loc[0:100000]
 
 
 print("train size:", train.shape)
@@ -47,15 +52,16 @@ neuralnet = make_model(vec_len)
 print("neural net set up:", time.time() - start)
 
 def test_neuralnet(neuralnet, sparse_matrix, prices, batchsize, amount_batches=1):
-    valbatch = sparse_matrix[amount_batches * batchsize: amount_batches * batchsize + batchsize].todense()
-    valbatchprices = prices[amount_batches * batchsize: amount_batches * batchsize + batchsize]
+    valbatch = sparse_matrix[amount_batches * batchsize: amount_batches * batchsize + 10000].todense()
+    valbatchprices = prices[amount_batches * batchsize: amount_batches * batchsize + 10000]
     for t in range(amount_batches):
+        print("this is batch", t)
         batch = sparse_matrix[t * batchsize:t * batchsize + batchsize].todense()
         batchprices = prices[t * batchsize:t * batchsize + batchsize]
         neuralnet.fit(batch, batchprices)
         predicted_prices = neuralnet.predict(valbatch)
         print("The score is:", calc_score(valbatchprices, predicted_prices))
 
-test_neuralnet(neuralnet, sparse_matrix, prices, 10000, amount_batches=40)
+test_neuralnet(neuralnet, sparse_matrix, prices, 1000, amount_batches=100)
 
 

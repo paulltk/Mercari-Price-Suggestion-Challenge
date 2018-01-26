@@ -1,14 +1,6 @@
-import numpy as np
 import pandas as pd
 import os
-import statistics
-import heapq
-import re, string
 import time
-import math
-from collections import Counter
-from sklearn.decomposition import PCA
-from nltk.stem import WordNetLemmatizer
 from sklearn.neural_network import MLPClassifier
 from otherfunc import *
 from preprocessing import *

@@ -108,3 +108,13 @@ Keras:
     0 - 300 price
     converge at 10 btach
     The score is: 0.5239741191382619
+
+
+   Keras:
+    model.add(Dense(512, activation='relu', input_dim=vec_len))
+    model.add(Dense(96, activation='relu'))
+    model.add(Dense(1, activation='linear'))
+    0 - 300 price
+    converge at 30 btach
+The score is: 0.49601193765687324
+
