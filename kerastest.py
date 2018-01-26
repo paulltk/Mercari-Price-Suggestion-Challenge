@@ -38,6 +38,8 @@ def iter_minibatches(mat, price, chunksize):
 path = "C:\\Users\pault\OneDrive\Documenten\GitHub\input"
 path = "/home/afalbrecht/Documents/Leren en Beslissen/"
 #path = "S:\OneDrive\Documenten\GitHub\input"
+path = "/home/lisa/Documents/leren_beslissen/Merri/"
+
 
 os.chdir(path)
 

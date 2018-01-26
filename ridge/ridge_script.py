@@ -27,13 +27,14 @@ print("Reading in Data")
 df_train = pd.read_csv('train.tsv', sep='\t')
 df_test = pd.read_csv('test.tsv', sep='\t')
 
-df = pd.concat([df_train, df_test], 0)
+df = df_train #pd.concat([df_train, df_test], 0)
 nrow_train = df_train.shape[0]
 y_train = np.log1p(df_train["price"])
-
+print(df, " DF")
 del df_train
+print(df, " DF!!!!!!!!!!!!!!!!!!!!!!")
 gc.collect()
-print(" heyy")
+
 print(df.memory_usage(deep = True))
 
 df["category_name"] = df["category_name"].fillna("Other").astype("category")
@@ -46,7 +47,7 @@ df["item_description"] = df["item_description"].fillna("None")
 df["item_condition_id"] = df["item_condition_id"].astype("category")
 df["brand_name"] = df["brand_name"].astype("category")
 
-print(df.memory_usage(deep = True))
+print(df.memory_usage(deep = False))
 
 print("Encodings")
 count = CountVectorizer(min_df=NAME_MIN_DF)
