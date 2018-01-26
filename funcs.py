@@ -104,8 +104,3 @@ def make_sparse_matrix(data, description_dict, categories_dict, brand_dict):
     for i, shipping in enumerate(shipping_list):
         sparse_matrix[i, des_len + cat_len + brand_len + 5] = shipping
     return sparse_matrix
-
-
-def remove_zero_prices(data):
-    data = data[data["price"] != 0]  # Drops rows with price = 0
-    data.index = range(len(data))
