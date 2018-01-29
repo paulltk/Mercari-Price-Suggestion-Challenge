@@ -19,6 +19,7 @@ path = "C:\\Users\pault\OneDrive\Documenten\GitHub\input"
 # path = "/home/afalbrecht/Documents/Leren en Beslissen/"
 #path = "S:\OneDrive\Documenten\GitHub\input"
 path = "/home/lisa/Documents/leren_beslissen/Merri/"
+path = "/Users/falksinke/LocalDocs/mercari_project"
 
 
 os.chdir(path)
@@ -55,7 +56,11 @@ def test_neuralnet(neuralnet, sparse_matrix, prices, batchsize, amount_batches=1
         neuralnet.fit(batch, batchprices)
         predicted_prices = neuralnet.predict(valbatch)
         print("The score is:", calc_score(valbatchprices, predicted_prices))
+        return predicted_prices
+45
 
-test_neuralnet(neuralnet, sparse_matrix, prices, 10000, amount_batches=40)
-
-
+predprice = test_neuralnet(neuralnet, sparse_matrix, prices, 10000, amount_batches=1)
+predprice.astype(float)
+index_vector = [x for x in range(len(predprice))]
+result = np.column_stack((index_vector, predprice))
+np.savetxt("submission.csv", result, delimiter=",")
