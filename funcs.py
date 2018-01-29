@@ -3,7 +3,6 @@ import pandas as pd
 import time
 from collections import Counter
 import re
-from sklearn.neural_network import MLPClassifier
 import math
 from scipy import sparse
 

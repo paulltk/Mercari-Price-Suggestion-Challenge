@@ -1,12 +1,6 @@
-import numpy as np
 import pandas as pd
 import os
-import statistics
-import heapq
-import re, string
 import time
-from nltk.stem import WordNetLemmatizer
-import csv
 from otherfunc import *
 
 path = "/home/afalbrecht/Documents/Leren en Beslissen/" #add your path here, dit is een test

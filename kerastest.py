@@ -30,7 +30,7 @@ train = pd.read_csv('train.tsv', delimiter='\t', encoding='utf-8')
 train = train[train["price"] < 300]
 train = train[train["price"] != 0]  # Drops rows with price = 0
 train.index = range(len(train))
-#train = train.loc[0:100000]
+# train = train.loc[0:100000]
 
 
 print("train size:", train.shape)
@@ -48,9 +48,10 @@ neuralnet = make_model(vec_len)
 print("neural net set up:", time.time() - start)
 
 def test_neuralnet(neuralnet, sparse_matrix, prices, batchsize, amount_batches=1):
-    valbatch = sparse_matrix[amount_batches * batchsize: amount_batches * batchsize + batchsize].todense()
-    valbatchprices = prices[amount_batches * batchsize: amount_batches * batchsize + batchsize]
+    valbatch = sparse_matrix[amount_batches * batchsize: amount_batches * batchsize + 10000].todense()
+    valbatchprices = prices[amount_batches * batchsize: amount_batches * batchsize + 10000]
     for t in range(amount_batches):
+        print("this is batch", t)
         batch = sparse_matrix[t * batchsize:t * batchsize + batchsize].todense()
         batchprices = prices[t * batchsize:t * batchsize + batchsize]
         neuralnet.fit(batch, batchprices)
@@ -58,6 +59,8 @@ def test_neuralnet(neuralnet, sparse_matrix, prices, batchsize, amount_batches=1
         print("The score is:", calc_score(valbatchprices, predicted_prices))
         return predicted_prices
 45
+
+test_neuralnet(neuralnet, sparse_matrix, prices, 1000, amount_batches=100)
 
 predprice = test_neuralnet(neuralnet, sparse_matrix, prices, 10000, amount_batches=1)
 predprice.astype(float)
