@@ -103,3 +103,40 @@ def make_sparse_matrix(data, description_dict, categories_dict, brand_dict):
     for i, shipping in enumerate(shipping_list):
         sparse_matrix[i, des_len + cat_len + brand_len + 5] = shipping
     return sparse_matrix
+
+def preprocess_training(train, start):
+    print("train size:", train.shape)
+    edit_data(train)
+    print("edited all the data", time.time() - start)
+    description_dict, categories_dict, brand_dict = make_dictionaries(train)
+    print("made dictionaries", time.time() - start, " \n dict lengths:",
+          len(description_dict), len(categories_dict), len(brand_dict))
+    sparse_matrix = make_sparse_matrix(train, description_dict, categories_dict, brand_dict)
+    print("made sparse matrix:", time.time() - start)
+    prices = get_price_list(train)
+    print("made prices", time.time() - start)
+    vec_len = len(description_dict) + len(categories_dict) + len(brand_dict) + 6
+    return sparse_matrix, prices, vec_len, [description_dict, categories_dict, brand_dict]
+
+def preprocess_test(test, dicts, start):
+    print("test size:", test.shape)
+    edit_data(test)
+    print("edited all the test data", time.time() - start)
+    sparse_matrix = make_sparse_matrix(test, dicts[0], dicts[1], dicts[2])
+    print("made sparse test matrix:", time.time() - start)
+    return sparse_matrix
+
+def get_rows(mat, price, rng):
+    return mat[rng].todense(), price[rng]
+
+def iter_minibatches(mat, price, chunksize):
+    # Provide chunks one by one
+    chunkstartmarker = 0
+    while chunkstartmarker < mat.shape[0]:
+        if (mat.shape[0] - chunkstartmarker) < chunksize:
+            chunksize = mat.shape[0] - chunkstartmarker
+        chunkrows = range(chunkstartmarker,chunkstartmarker+chunksize)
+        X_chunk, y_chunk = get_rows(mat, price, chunkrows)
+        yield X_chunk, y_chunk
+        chunkstartmarker += chunksize
+
