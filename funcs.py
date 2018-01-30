@@ -72,7 +72,7 @@ def replace_missing_brands(data, brand_dict):
 def calc_score(prices, predicted_prices):
     summ = 0
     for price, pre_price in zip(prices, predicted_prices):
-        summ += (math.log(int(pre_price)+1) - math.log(int(price)+1))**2
+        summ += (np.log(pre_price+1) - np.log(price+1))**2
     return math.sqrt(summ / len(prices))
 
 
@@ -104,16 +104,16 @@ def make_sparse_matrix(data, description_dict, categories_dict, brand_dict):
         sparse_matrix[i, des_len + cat_len + brand_len + 5] = shipping
     return sparse_matrix
 
-def preprocess_training(train, start):
-    print("train size:", train.shape)
-    edit_data(train)
+def preprocess_training(data, start):
+    print("train size:", data.shape)
+    edit_data(data)
     print("edited all the data", time.time() - start)
-    description_dict, categories_dict, brand_dict = make_dictionaries(train)
+    description_dict, categories_dict, brand_dict = make_dictionaries(data)
     print("made dictionaries", time.time() - start, " \n dict lengths:",
           len(description_dict), len(categories_dict), len(brand_dict))
-    sparse_matrix = make_sparse_matrix(train, description_dict, categories_dict, brand_dict)
+    sparse_matrix = make_sparse_matrix(data, description_dict, categories_dict, brand_dict)
     print("made sparse matrix:", time.time() - start)
-    prices = get_price_list(train)
+    prices = get_price_list(data)
     print("made prices", time.time() - start)
     vec_len = len(description_dict) + len(categories_dict) + len(brand_dict) + 6
     return sparse_matrix, prices, vec_len, [description_dict, categories_dict, brand_dict]
@@ -140,3 +140,7 @@ def iter_minibatches(mat, price, chunksize):
         yield X_chunk, y_chunk
         chunkstartmarker += chunksize
 
+def aggregate_predicts(Y1, Y2):
+    assert Y1.shape == Y2.shape
+    ratio = 0.63
+    return Y1 * ratio + Y2 * (1.0 - ratio)
